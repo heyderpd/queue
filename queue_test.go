@@ -49,26 +49,25 @@ func hasMuchTimeDIff(err float64, t *testing.T) {
 func TestInitWithPanic(t *testing.T) {
 	defer needPanic(t)
 
-	que := new(Queues)
-	que.Init(0)
+	que := New(0)
+	que.Get()
 }
 
 func TestInit(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(1)
-	que.Init(5)
-	que.Init(10)
-	que.Init(200)
-	que.Init(3000)
+	que := New(1)
+	que = New(5)
+	que = New(10)
+	que = New(200)
+	que = New(3000)
+	que.Get()
 }
 
 func TestBasic(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(1)
+	que := New(1)
 	mutex := que.Get()
 	mutex.Lock()
 	mutex.Unlock()
@@ -77,8 +76,7 @@ func TestBasic(t *testing.T) {
 func TestSequencial(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(1)
+	que := New(1)
 
 	testQtd := 10
 	expected := getExpected(testQtd)
@@ -98,8 +96,7 @@ func TestSequencial(t *testing.T) {
 func TestSequencialWihtRoutines(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(1)
+	que := New(1)
 
 	channel := make(chan bool)
 	testQtd := 10
@@ -134,8 +131,7 @@ func TestSequencialWihtRoutines(t *testing.T) {
 func TestWithTwoQueue(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(2)
+	que := New(2)
 
 	channel := make(chan bool)
 	testQtd := 10
@@ -170,8 +166,7 @@ func TestWithTwoQueue(t *testing.T) {
 func TestWithFiveQueue(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(5)
+	que := New(5)
 
 	channel := make(chan bool)
 	testQtd := 10
@@ -206,8 +201,7 @@ func TestWithFiveQueue(t *testing.T) {
 func TestWithTeenQueue(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(10)
+	que := New(10)
 
 	channel := make(chan bool)
 	testQtd := 10
@@ -242,8 +236,7 @@ func TestWithTeenQueue(t *testing.T) {
 func TestMoreQueueThanJobs(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(50)
+	que := New(50)
 
 	channel := make(chan bool)
 	testQtd := 10
@@ -278,8 +271,7 @@ func TestMoreQueueThanJobs(t *testing.T) {
 func TestBig(t *testing.T) {
 	defer dontPanic(t)
 
-	que := new(Queues)
-	que.Init(500)
+	que := New(500)
 
 	channel := make(chan bool)
 	testQtd := 3000

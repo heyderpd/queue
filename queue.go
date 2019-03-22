@@ -16,6 +16,12 @@ type queuesControl interface {
 	Get()  sync.Mutex
 }
 
+func New(limit int) *Queues {
+	que := new(Queues)
+	que.Init(limit)
+	return que
+}
+
 func (q *Queues) Init(limit int) {
 	if limit <= 0 {
 		panic("Queues: invalid limit")

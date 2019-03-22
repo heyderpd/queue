@@ -16,12 +16,13 @@
     "github.com/heyderpd/queue"
   )
 
-  var jobsToDo = make([]string, 10000)
+  var (
+    // init your pool of queues with your limit
+    que = queue.New(100)
+    var jobsToDo = make([]string, 10000)
+  )
 
   func main() {
-    // init your pool of queues with your limit
-    que.Init(100)
-
     for _, name := range jobsToDo {
       go func(){
         // get next queue control
@@ -46,8 +47,8 @@ And will be evenly distributed among the queues. The only you need is Init() and
 
 ```go
   var (
-    queueLimit = 300
-    que = new(Queues)
+    // limit the amount of concurrent active processes
+    que = queue.New(300)
     jobsToDo = make([]string, 99999)
   )
 
@@ -65,9 +66,6 @@ And will be evenly distributed among the queues. The only you need is Init() and
   }
 
   func main() {
-    // limit the amount of concurrent active processes
-    que.Init(queueLimit)
-
     for _, job := range jobsToDo {
       /* start all requisition in the same time!!! =D */
       go doHttpRequest(job)

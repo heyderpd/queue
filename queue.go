@@ -2,29 +2,9 @@ package queue
 
 import (
 	"sync"
-	"fmt"
-	"reflect"
 )
 
-func New(args interface{}) queuesControl {
-	fmt.Println(args)
-	fmt.Println(reflect.TypeOf(args))
-	if val, ok := args.(int); ok {
-		return newSimple(val)
-	}
-	if val, ok := args.(Mult); ok {
-		return newMult(val)
-	}
-	panic("Queues: invalid argument")
-}
-
-func newMult(limit Mult) multQueuesControl {
-	que := new(queues)
-	initQueues(que, 10)
-	return que
-}
-
-func newSimple(limit int) queuesControl {
+func New(limit int) queuesControl {
 	que := new(queues)
 	initQueues(que, limit)
 	return que
@@ -57,4 +37,26 @@ func getNextDoor(q *queues) *sync.Mutex {
 		q.next = 0
 	}
 	return q.list[q.next]
+}
+
+func NewMult(multLimit Mult) multQueuesControl {
+	m := new(multQueues)
+	m.mult = make(queueMap)
+
+	for key, limit := range multLimit {
+		m.mult[key] = New(limit)
+	}
+
+	return m
+}
+
+func (m *multQueues) GetGroup(group string) *sync.Mutex {
+	m.choosing.Lock()
+	q, exist := m.mult[group]
+	m.choosing.Unlock()
+
+	if !exist {
+		panic("Queues: invalid queue group")
+	}
+	return q.Get()
 }

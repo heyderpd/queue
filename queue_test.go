@@ -23,7 +23,7 @@ func dontPanic(t *testing.T) {
 	}
 }
 
-func job(que *Queues, channel chan bool) {
+func job(que queuesControl, channel chan bool) {
 	mutex := que.Get()
 	mutex.Lock()
 	defer mutex.Unlock()

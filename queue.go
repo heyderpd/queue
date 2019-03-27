@@ -4,25 +4,13 @@ import (
 	"sync"
 )
 
-type Queues struct {
-	limit    int
-	next     int
-	choosing sync.Mutex
-	list     []*sync.Mutex
-}
-
-type queuesControl interface {
-	Init()
-	Get()  sync.Mutex
-}
-
-func New(limit int) *Queues {
-	que := new(Queues)
-	que.Init(limit)
+func New(limit int) queuesControl {
+	que := new(queues)
+	initQueues(que, limit)
 	return que
 }
 
-func (q *Queues) Init(limit int) {
+func initQueues(q *queues, limit int) {
 	if limit <= 0 {
 		panic("Queues: invalid limit")
 	}
@@ -36,14 +24,14 @@ func (q *Queues) Init(limit int) {
 	}
 }
 
-func (q *Queues) Get() *sync.Mutex {
+func (q *queues) Get() *sync.Mutex {
 	q.choosing.Lock()
 	door := getNextDoor(q)
 	q.choosing.Unlock()
 	return door
 }
 
-func getNextDoor(q *Queues) *sync.Mutex {
+func getNextDoor(q *queues) *sync.Mutex {
 	q.next++
 	if q.next >= q.limit {
 		q.next = 0

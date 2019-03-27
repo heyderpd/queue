@@ -72,3 +72,42 @@ And will be evenly distributed among the queues. The only you need is Init() and
     }
   }
 ```
+
+## Http Concurrent Example with Mult Queue
+
+If you need balance concorrent request with diferent queues, with queue.NewMult you can create a map of queue groups!
+Only change is the init need receive a specific map and the Get function substituted to que.GetGroup, that recei the group name to work.
+
+```go
+  var (
+    // limit the amount of concurrent active processes by group!
+    que = queue.NewMult(queue.Mult{
+      "get-from-a": 10,
+      "get-from-b": 20,
+    })
+    jobsToDo = make([]string, 1234)
+  )
+
+  func doHttpRequest(job string) {
+    /* get mutex from specific queue group */
+    mutex := que.GetGroup(job)
+
+    /* call mutex lock and defer unlock in your function */
+    mutex.Lock()
+    defer mutex.Unlock()
+
+    /* make your http request */
+    client := &http.Client{}
+    req, err := http.NewRequest(method, url + job, body)
+    resp, err := client.Do(req)
+    /* look for a coffee */
+  }
+
+  func main() {
+    for _, job := range jobsToDo {
+      /* start all requisition in the same time!!! =D */
+      go doHttpRequest("get-from-a")
+      go doHttpRequest("get-from-b")
+    }
+  }
+```

@@ -2,9 +2,29 @@ package queue
 
 import (
 	"sync"
+	"fmt"
+	"reflect"
 )
 
-func New(limit int) queuesControl {
+func New(args interface{}) queuesControl {
+	fmt.Println(args)
+	fmt.Println(reflect.TypeOf(args))
+	if val, ok := args.(int); ok {
+		return newSimple(val)
+	}
+	if val, ok := args.(Mult); ok {
+		return newMult(val)
+	}
+	panic("Queues: invalid argument")
+}
+
+func newMult(limit Mult) multQueuesControl {
+	que := new(queues)
+	initQueues(que, 10)
+	return que
+}
+
+func newSimple(limit int) queuesControl {
 	que := new(queues)
 	initQueues(que, limit)
 	return que

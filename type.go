@@ -14,3 +14,11 @@ type queues struct {
 type queuesControl interface {
 	Get() *sync.Mutex
 }
+
+type Mult map[string]int
+
+type multQueues map[string]queuesControl
+
+type multQueuesControl interface {
+	Get(string) *sync.Mutex
+}

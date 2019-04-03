@@ -26,12 +26,12 @@ func initQueues(q *queues, limit int) {
 
 func (q *queues) Get() *sync.Mutex {
 	q.choosing.Lock()
-	door := getNextDoor(q)
+	queue := getNextQueue(q)
 	q.choosing.Unlock()
-	return door
+	return queue
 }
 
-func getNextDoor(q *queues) *sync.Mutex {
+func getNextQueue(q *queues) *sync.Mutex {
 	q.next++
 	if q.next >= q.limit {
 		q.next = 0
